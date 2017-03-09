@@ -26,6 +26,23 @@ model.getPosts = function () {
 };
 
 
+/**
+ * Get a single post based on URL slug
+ *
+ * @param slug {string} The slug for the post
+ * @return post {object} Single post
+ */
+ model.getPost = function (slug) {
+ 	var posts = model.getLocalStorage();
+ 	for( i=0, max = posts.length; i < max; i++ ) {
+		if( slug === posts[i].slug) {
+			return posts[i];
+		}
+	}
+
+	return null;
+ };
+
 
  /**
   * Gets content from local storage

@@ -17,7 +17,7 @@ var vanillaPress = {
     // console.log( jsonData );
 
 	model.init();
-	view.init();
+	router.init();
 
   }
 
