@@ -7,6 +7,9 @@
  */
 
 view.init = function() {
+	console.log('before');
+	view.createMainMenu();
+	console.log('after');
 
 }
 
@@ -30,20 +33,49 @@ view.loadBlogPosts = function() {
 
 
 /**
- * Load single blog post
+ * Load single blog or page based on URL
  *
  * @param slug {string} Post to create markup
  */
 
-view.loadBlogPost = function( slug ) {
+view.loadSingleContent = function( slug ) {
 
-	var post = model.getPost( slug )
+	var contentObj = model.getPost( slug )
 		titleEl = helpers.getPageTitleEl(),
 		contentEl = helpers.getPageContentEl();
 
-	titleEl.innerHTML = post.title;
-	contentEl.innerHTML = post.content;
+	//TODO: refactor these conditionals to model
+	if( null === contentObj ) {
+		contentObj = model.getPage( slug );
+	}
 
+	if( null === contentObj ) {
+		contentObj = {
+			title: '404 Error',
+			content: 'Content not found'
+		}
+	}
+	titleEl.innerHTML = contentObj.title;
+	contentEl.innerHTML = contentObj.content;
+
+};
+
+/**
+ * Create Main Menu
+ */
+
+view.createMainMenu = function() {
+
+	var pages = model.getPages(),
+	menuMarkup = document.createDocumentFragment(),
+	mainMenuEl = helpers.getMainMenuEl();
+	console.log(mainMenuEl);
+
+	for (var i = 0, max = pages.length; i < max; i++) {
+		menuMarkup.appendChild( helpers.createMenuItem( pages[i] ) )
+	}
+
+	mainMenuEl.appendChild( menuMarkup );
 };
 
 /**
@@ -64,7 +96,6 @@ view.createPostMarkup = function( post ) {
 	titleLink.appendChild( titleText );
 	titleLink.href = '#' + post.slug;
 	titleEl.appendChild( titleLink );
-	console.log( titleEl );
 
 	//Build Content
 	contentEl.appendChild( document.createTextNode( post.content ) );

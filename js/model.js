@@ -10,9 +10,9 @@
 var model = {};
 
 model.init = function() {
-	model.updateLocalStorage( jsonData );
+	model.updateLocalStorage( data );
 	// model.removeLocalStorage();
-	console.log( model.getPosts() );
+	console.log( model.getPage('about') );
 }
 
 /**
@@ -21,7 +21,7 @@ model.init = function() {
  * @return posts {array} an appary of post objects
  */
 model.getPosts = function () {
-	var posts = model.getLocalStorage();
+	var posts = model.getLocalStorage().posts;
 	return posts;
 };
 
@@ -33,7 +33,7 @@ model.getPosts = function () {
  * @return post {object} Single post
  */
  model.getPost = function (slug) {
- 	var posts = model.getLocalStorage();
+ 	var posts = model.getLocalStorage().posts;
  	for( i=0, max = posts.length; i < max; i++ ) {
 		if( slug === posts[i].slug) {
 			return posts[i];
@@ -43,6 +43,34 @@ model.getPosts = function () {
 	return null;
  };
 
+
+ /**
+  * Gets pages from local storage
+  *
+  * @return pages {array} an appary of page objects
+  */
+ model.getPages = function () {
+ 	var pages = model.getLocalStorage().pages;
+ 	return pages;
+ };
+
+
+ /**
+  * Get a single page based on URL slug
+  *
+  * @param slug {string} The slug for the page
+  * @return page {object} Single page
+  */
+  model.getPage = function (slug) {
+  	var pages = model.getLocalStorage().pages;
+  	for( i=0, max = pages.length; i < max; i++ ) {
+ 		if( slug === pages[i].slug) {
+ 			return pages[i];
+ 		}
+ 	}
+
+ 	return null;
+  };
 
  /**
   * Gets content from local storage
@@ -62,7 +90,7 @@ model.getLocalStorage = function() {
 
 model.updateLocalStorage = function( store ) {
 	//TODO: could add a conditional to check if we're getting a string
-	localStorage.setItem( 'vanillaPress', store );
+	localStorage.setItem( 'vanillaPress', JSON.stringify( store ) );
 };
 
 /**
