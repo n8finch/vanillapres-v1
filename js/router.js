@@ -1,62 +1,89 @@
 /**
- * Router for managing url changes
+ * Router file for managing url changes
  */
 
 /**
- * Main router object
+ * The main router object.
+ *
  */
 var router = {};
 
 /**
- * Initialize the router
+ * Initializes the Router
+ *
  */
 router.init = function() {
 
-	router.loadContent();
-	router.listenPageChange();
+  router.loadContent();
+  router.listenPageChange();
 
 };
-
 
 /**
  * Gets the slug from the URL
  *
- * @return slug {string} Slug for content
+ * @return {string} slug Slug from URL
  */
 router.getSlug = function() {
-	var slug = window.location.hash;
 
-	if( "" === slug ) {
-		return null;
-	} else {
-		return slug.substring( 1 );
-	}
-}
+  slug = window.location.hash;
+
+  if( "" === slug ) {
+
+    return null;
+
+  } else {
+
+    return slug.substr( 1 );
+
+  }
+
+};
 
 /**
  * Listener function for URL changes
+ *
  */
-
 router.listenPageChange = function() {
-	window.addEventListener( 'hashchange', router.loadContent, false );
+
+  window.addEventListener( 'hashchange', router.loadContent, false );
+
 }
 
 
 /**
- * Load Content based on URL
+ * Determines whether to load blog posts
+ * or single post
+ *
  */
 
 router.loadContent = function() {
-	var slug = router.getSlug();
 
-	//First, clear the content
-	view.clearContent();
+  var url = router.getSlug(),
+      contentObj = model.getContent( url ),
+      editorEl = helpers.getEditorEl();
 
-	if (null === slug ) {
-		view.loadSingleContent( 'home' );
-	} else if( 'blog' === slug ) {
-		view.loadBlogPosts();
-	} else {
-		view.loadSingleContent( slug );
-	}
+  view.clearContent();
+
+  if( null === url ) {
+
+    view.loadSingleContent( 'home' );
+
+  } else if( 'blog' === url ) {
+
+    view.loadBlogPosts();
+
+  } else {
+
+    view.loadSingleContent( url );
+
+  }
+
+  editor.currentContent = contentObj;
+  if( false === editorEl.classList.contains( 'hidden' ) ) {
+
+    editor.loadEditForm( editor.currentContent );
+
+  }
+
 }
